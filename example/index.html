@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>jquery.waterfall</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../jquery.waterfall.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript" charset="utf-8">
+		$(function() {
+			$('.waterfall').click(function(e) {
+				
+				var f1 = function() {
+						return $.ajax({ url : 'post.php?arg=1'})
+					},
+					f2 = function(arg) {
+						return parseInt(arg)+1;
+					},
+					f3 = function() {
+						return $.ajax({ url : 'post.php?arg=3'+arguments[1]})
+					};
+			
+				$.waterfall(
+					f1, f2, f3, 'Most important question in the Universe.', {answer : 42}, null, void(0), $.ajax({ url : 'post.php?arg=4'})
+				).fail(function() {
+					console.log('error');
+					console.log(arguments);
+					$('.result').text('waterfall failed. arguments number: '+arguments.length+'. Details see in console.');
+				}).done(function() {
+					console.log('success');
+					console.log(arguments);
+					$('.result').text('waterfall success. arguments number: '+arguments.length+'. Details see in console.');
+				})
+				
+			})
+		})
+	</script>
+
+</head>
+<body>
+<button class="waterfall">waterfall</button>
+<div class="result">
+	
+</div>
+</body>
+</html>
