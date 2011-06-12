@@ -7,26 +7,28 @@ jQuery util.
 
 Runs functions given in arguments in series, each functions passing their results to the next one.
 Return jQuery Deferred object.
-При успешном завершении всех фунции их результаты передаются в resolve обработчик Deferred object.
-Если одна из функций завершится с ошибкой будет вызван reject обработчик Deferred объекта.
+On all functions success pass its results into Deferred.resolve();
+On any function fail call Deferred.reject();
 
 How to use
 ----------
 
-Последовательно выполняем 3 аякс-запроса, по завершении, что-то делаем с результатами:
+Call 3 requests in series:
 
 $.waterfall(
    function() { $.ajax({url : first_url}) },
    function() { $.ajax({url : second_url}) },
    function() { $.ajax({url : another_url}) }
-).fail(function() {
-   console.log(arguments)
-).done(function() {
-   console.log(arguments)
+).fail(function(error) {
+   console.log(error)
+).done(function(result1, result2, result3) {
+   console.log(result1);
+   console.log(result2);
+   console.log(result3)
 });
 
-Выполняем 2 аякс запроса, проверяем результат.
-В случае ошибки останавливаем "водопад"
+
+Call 2 requests, check results, on error stop waterfall:
 
 $.waterfall(
 	function() { $.ajax(....) },
@@ -44,7 +46,7 @@ $.waterfall(
    console.log(arguments)
 });
 
-Аргументами могут быть не только функции возвращающие jQuery.Deferred:
+$.waterfall arguments may have any type, not only function:
 
 $.waterfall(
 	function() { $.ajax({url : first_url}) },
@@ -52,7 +54,7 @@ $.waterfall(
 	"string",
 	1,
 	null,
-	{a : 12}
+	{a : 12},
    function() { return 42 }
 ).fail(function() {
    console.log(arguments)
