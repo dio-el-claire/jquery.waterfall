@@ -11,28 +11,70 @@
 	<script type="text/javascript" charset="utf-8">
 		$(function() {
 			$('.waterfall').click(function(e) {
+				console.log('first');
 				
-				var f1 = function() {
-						return $.ajax({ url : 'post.php?arg=1'})
-					},
-					f2 = function(arg) {
-						return parseInt(arg)+1;
-					},
-					f3 = function() {
-						return $.ajax({ url : 'post.php?arg=3'+arguments[1]})
-					};
-			
+				// series of 3 request - always done
+				
 				$.waterfall(
-					f1, f2, f3, 'Most important question in the Universe.', {answer : 42}, null, void(0), $.ajax({ url : 'post.php?arg=4'})
-				).fail(function() {
-					console.log('error');
-					console.log(arguments);
-					$('.result').text('waterfall failed. arguments number: '+arguments.length+'. Details see in console.');
-				}).done(function() {
-					console.log('success');
-					console.log(arguments);
-					$('.result').text('waterfall success. arguments number: '+arguments.length+'. Details see in console.');
-				})
+					function() {
+						return $.ajax({ url : 'post.php?arg=1'});
+					},
+					function() {
+						return $.ajax({ url : 'post.php?arg='+(1+parseInt(arguments[0]))});
+					},
+					function() {
+						return $.ajax({ url : 'post.php?arg=3'});
+					},
+					function() {
+						return parseInt(arguments[0]) + parseInt(arguments[1]) + parseInt(arguments[2]);
+					}
+					)
+					.fail(function() {
+						console.log('error');
+						console.log(arguments)
+						$('.result').append('First waterfall failed. arguments number: '+arguments.length+'. Details see in console.<br>');
+					})
+					.done(function() {
+						console.log('success');
+						console.log(arguments)
+						$('.result').append('First waterfall success. arguments number: '+arguments.length+'. Details see in console.<br>');
+					});
+					
+				console.log('second')
+					
+				// check result after first request
+				$.waterfall(
+					function() {
+						return $.ajax({ url : 'post.php?ser=2&arg=1'});
+					},
+					function() {
+						return !(parseInt(arguments[0]) == 1);
+					},
+					function() {
+						return $.ajax({ url : 'post.php?ser=2&arg=3'});
+					}
+					)
+					.fail(function() {
+						console.log('error');
+						console.log(arguments)
+						$('.result').append('Second waterfall failed. arguments number: '+arguments.length+'. Details see in console.<br>');
+					})
+					.done(function() {
+						console.log('success');
+						console.log(arguments)
+						$('.result').text('Second waterfall success. arguments number: '+arguments.length+'. Details see in console.<br>');
+					});
+				// $.waterfall(
+				// 	f1, f2, f3, 'Most important question in the Universe.', {answer : 42}, null, void(0), $.ajax({ url : 'post.php?arg=4'})
+				// ).fail(function() {
+				// 	console.log('error');
+				// 	console.log(arguments);
+				// 	$('.result').text('waterfall failed. arguments number: '+arguments.length+'. Details see in console.');
+				// }).done(function() {
+				// 	console.log('success');
+				// 	console.log(arguments);
+				// 	$('.result').text('waterfall success. arguments number: '+arguments.length+'. Details see in console.');
+				// })
 				
 			})
 		})
