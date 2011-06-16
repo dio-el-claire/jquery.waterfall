@@ -62,7 +62,6 @@ Call 2 requests, check results, on error stop waterfall:
 	).done(function() {
 		console.log(arguments)
 	});
-```
 
 
 License
